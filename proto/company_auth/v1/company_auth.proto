@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package company_auth.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "go-code-runner-microservice/auth/proto/company_auth/v1;companyauthpb";
+
+message Company {
+  int32 id = 1;
+  string name = 2;
+  string email = 3;
+  optional string api_key = 4;
+  optional string client_id = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message RegisterRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+}
+
+message RegisterResponse {
+  bool success = 1;
+  optional string error = 2;
+  optional Company company = 3;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  bool success = 1;
+  optional string error = 2;
+  optional Company company = 3;
+  optional string token = 4;
+}
+
+message GenerateAPIKeyRequest {
+  int32 company_id = 1;
+}
+
+message GenerateAPIKeyResponse {
+  bool success = 1;
+  optional string error = 2;
+  optional string api_key = 3;
+}
+
+message GenerateClientIDRequest {
+  int32 company_id = 1;
+}
+
+message GenerateClientIDResponse {
+  bool success = 1;
+  optional string error = 2;
+  optional string client_id = 3;
+}
+
+service CompanyAuthService {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+
+  rpc Login(LoginRequest) returns (LoginResponse);
+
+  rpc GenerateAPIKey(GenerateAPIKeyRequest) returns (GenerateAPIKeyResponse);
+
+  rpc GenerateClientID(GenerateClientIDRequest) returns (GenerateClientIDResponse);
+}
