@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  auth-service:
+    deploy:
+      resources:
+        limits:
+          cpus: '8'
+          memory: 8G
+    build:
+      context: .
+      dockerfile: local.DockerFile
+    container_name: go-code-runner-auth-service-api-local
+    ports:
+      - "50052:50052"
+    env_file:
+      - .env
+    environment:
+      APP_ENVIRONMENT: local
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - app_net
+
+  postgres:
+    image: postgres:16
+    container_name: go-code-runner-auth-db-local
+    environment:
+      POSTGRES_USER:  postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: go_code_runner_auth_db-local
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_net
+
+  redis:
+    image: redis:latest
+    container_name: go-code-runner-redis-local
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app_net
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  app_net:
+    driver: bridge
